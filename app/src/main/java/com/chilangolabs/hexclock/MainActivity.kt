@@ -52,11 +52,11 @@ class MainActivity : AppCompatActivity() {
         return HexHour(colorR, hourR)
     }
 
-    private fun applyColor(colors: HexHour) {
-        val intColor = Color.parseColor(colors.color)
+    private fun applyColor(hexHour: HexHour) {
+        val intColor = Color.parseColor(hexHour.color)
         rootView.setBackgroundColor(intColor)
-        txtClockColor.text = colors.color
-        txtClockColorTime.text = colors.hour
+        txtClockColor.text = hexHour.color
+        txtClockColorTime.text = hexHour.hour
         txtClockColor.setTextColor(colorForText(intColor))
         txtClockColorTime.setTextColor(colorForText(intColor))
         window.statusBarColor = intColor
