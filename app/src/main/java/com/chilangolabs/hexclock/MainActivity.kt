@@ -12,7 +12,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
-    var timer: Timer? = null
+    private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         timer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 async(UI) {
-                    val data: Deferred<Colors> = bg {
+                    val data: Deferred<HexHour> = bg {
                         getHexaTime()
                     }
                     applyColor(data.await())
@@ -40,18 +40,19 @@ class MainActivity : AppCompatActivity() {
         timer?.cancel()
     }
 
-    private fun getHexaTime(): Colors {
-        val calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR_OF_DAY) * 255 / 23
-        val minutes = calendar.get(Calendar.MINUTE) * 255 / 59
-        val seconds = calendar.get(Calendar.SECOND) * 255 / 59
+    private fun getHexaTime(): HexHour {
+        val cal = Calendar.getInstance()
 
-        val colorR = "#${String.format("%02X", hour)}${String.format("%02X", minutes)}${String.format("%02X", seconds)}"
-        val hourR = "${calendar.get(Calendar.HOUR_OF_DAY)}:${calendar.get(Calendar.MINUTE)}:${calendar.get(Calendar.SECOND)}"
-        return Colors(colorR, hourR)
+        val colorR = "#${cal.getHexaColor(Calendar.HOUR_OF_DAY)}${cal.getHexaColor(Calendar.MINUTE)}${cal.getHexaColor(Calendar.SECOND)}"
+        val formatHour = String.format("%02d", cal.get(Calendar.HOUR_OF_DAY))
+        val formatMinute = String.format("%02d", cal.get(Calendar.MINUTE))
+        val formatSecond = String.format("%02d", cal.get(Calendar.SECOND))
+
+        val hourR = "$formatHour:$formatMinute:$formatSecond"
+        return HexHour(colorR, hourR)
     }
 
-    private fun applyColor(colors: Colors) {
+    private fun applyColor(colors: HexHour) {
         val intColor = Color.parseColor(colors.color)
         rootView.setBackgroundColor(intColor)
         txtClockColor.text = colors.color
@@ -59,6 +60,13 @@ class MainActivity : AppCompatActivity() {
         txtClockColor.setTextColor(colorForText(intColor))
         txtClockColorTime.setTextColor(colorForText(intColor))
         window.statusBarColor = intColor
+    }
+
+    fun Calendar.getHexaColor(date: Int): String = when (date) {
+        Calendar.HOUR_OF_DAY -> String.format("%02X", this.get(date) * 255 / 23)
+        Calendar.MINUTE -> String.format("%02X", this.get(date) * 255 / 59)
+        Calendar.SECOND -> String.format("%02X", this.get(date) * 255 / 59)
+        else -> ""
     }
 
     private fun colorForText(color: Int): Int {
@@ -70,6 +78,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    data class Colors(val color: String, val hour: String)
+    data class HexHour(val color: String, val hour: String)
 
 }
