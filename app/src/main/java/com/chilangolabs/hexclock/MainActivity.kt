@@ -2,15 +2,20 @@ package com.chilangolabs.hexclock
 
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.async
-import org.jetbrains.anko.coroutines.experimental.bg
+import kotlinx.coroutines.*
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 class MainActivity : AppCompatActivity() {
+
+    private val job = SupervisorJob()
+    private val coroutineContext: CoroutineContext
+        get() {
+            return job + Dispatchers.Main
+        }
+    private val scope = CoroutineScope(coroutineContext)
 
     private var timer: Timer? = null
 
@@ -25,11 +30,11 @@ class MainActivity : AppCompatActivity() {
         timer = Timer()
         timer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                async(UI) {
-                    val data: Deferred<HexHour> = bg {
-                        getHexaTime()
+                scope.launch {
+                    val data = withContext(Dispatchers.Default) {
+                        return@withContext getHexaTime()
                     }
-                    applyColor(data.await())
+                    applyColor(data)
                 }
             }
         }, 0, 1000)
@@ -38,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         timer?.cancel()
+        scope.cancel()
     }
 
     private fun getHexaTime(): HexHour {

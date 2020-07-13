@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/HexColor.iml" filepath="$PROJECT_DIR$/HexColor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/HexColorKt.iml" filepath="$PROJECT_DIR$/.idea/modules/HexColorKt.iml" group="HexColorKt" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/HexColorKt-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/HexColorKt-app.iml" group="HexColorKt/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
