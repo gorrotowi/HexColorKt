@@ -8,14 +8,14 @@
     android:orientation="vertical"
     tools:context="com.chilangolabs.hexclock.MainActivity">
 
-    <TextView
+    <com.robinhood.ticker.TickerView
         android:id="@+id/txtClockColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!"
         android:textSize="30sp" />
 
-    <TextView
+    <com.robinhood.ticker.TickerView
         android:id="@+id/txtClockColorTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

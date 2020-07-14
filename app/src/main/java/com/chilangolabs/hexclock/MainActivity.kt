@@ -3,6 +3,7 @@ package com.chilangolabs.hexclock
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.robinhood.ticker.TickerUtils
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import java.util.*
@@ -15,29 +16,50 @@ class MainActivity : AppCompatActivity() {
         get() {
             return job + Dispatchers.Main
         }
-    private val scope = CoroutineScope(coroutineContext)
+    private var scope = CoroutineScope(coroutineContext)
 
     private var timer: Timer? = null
+
+//    val viewModel by lazy {
+//        ViewModelProvider(this).get(MainViewModel::class.java)
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        txtClockColor?.setCharacterLists(TickerUtils.provideAlphabeticalList())
+        txtClockColorTime?.setCharacterLists(TickerUtils.provideNumberList())
+
     }
+
+//    private fun setUpObservables() {
+//        viewModel.mutableColor.observe(this, androidx.lifecycle.Observer { color ->
+//            applyColor(color)
+//        })
+//    }
 
     override fun onResume() {
         super.onResume()
         //StartClock
+
+//        setUpObservables()
+
         timer = Timer()
         timer?.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
-                scope.launch {
-                    val data = withContext(Dispatchers.Default) {
-                        return@withContext getHexaTime()
-                    }
-                    applyColor(data)
+                scope.launch() {
+//                    Log.i("CTX", "Coroutine ->>>")
+//                    viewModel.getLastHexaTime()
+                    val color = getHexaTime()
+                    applyColor(color)
                 }
             }
         }, 0, 1000)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        scope = CoroutineScope(coroutineContext)
     }
 
     override fun onPause() {
@@ -63,8 +85,8 @@ class MainActivity : AppCompatActivity() {
         rootView.setBackgroundColor(intColor)
         txtClockColor.text = hexHour.color
         txtClockColorTime.text = hexHour.hour
-        txtClockColor.setTextColor(colorForText(intColor))
-        txtClockColorTime.setTextColor(colorForText(intColor))
+        txtClockColor.textColor = colorForText(intColor)
+        txtClockColorTime.textColor = colorForText(intColor)
         window.statusBarColor = intColor
     }
 
